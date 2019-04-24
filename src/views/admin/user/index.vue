@@ -307,16 +307,20 @@ export default {
       const set = this.$refs
       set[formName].validate(valid => {
         if (valid) {
-          addObj(this.form).then(() => {
-            this.dialogFormVisible = false
-            this.getList()
-            this.$notify({
-              title: '成功',
-              message: '创建成功',
-              type: 'success',
-              duration: 2000
-            })
+          addObj(this.form).then(({data}) => {
+            if (data.status === 'SUCCEED') {
+              this.getList()
+              this.$notify({
+                title: '成功',
+                message: '创建成功',
+                type: 'success',
+                duration: 2000
+              })
+            }
           })
+            .finally(() => {
+              this.dialogFormVisible = false
+            })
         } else {
           return false
         }
@@ -332,16 +336,20 @@ export default {
         if (valid) {
           this.dialogFormVisible = false
           this.form.password = undefined
-          putObj(this.form).then(() => {
-            this.dialogFormVisible = false
-            this.getList()
-            this.$notify({
-              title: '成功',
-              message: '修改成功',
-              type: 'success',
-              duration: 2000
-            })
+          putObj(this.form).then(({data}) => {
+            if (data.status === 'SUCCEED') {
+              this.getList()
+              this.$notify({
+                title: '成功',
+                message: '修改成功',
+                type: 'success',
+                duration: 2000
+              })
+            }
           })
+            .finally(() => {
+              this.dialogFormVisible = false
+            })
         } else {
           return false
         }
@@ -358,22 +366,19 @@ export default {
         }
       ).then(() => {
         delObj(row.userId)
-          .then(() => {
-            this.getList()
-            this.$notify({
-              title: '成功',
-              message: '删除成功',
-              type: 'success',
-              duration: 2000
-            })
+          .then(({data}) => {
+            if (data.status === 'SUCCEED') {
+              this.getList()
+              this.$notify({
+                title: '成功',
+                message: '删除成功',
+                type: 'success',
+                duration: 2000
+              })
+            }
           })
-          .catch(() => {
-            this.$notify({
-              title: '失败',
-              message: '删除失败',
-              type: 'error',
-              duration: 2000
-            })
+          .finally(() => {
+            this.dialogFormVisible = false
           })
       })
     },
