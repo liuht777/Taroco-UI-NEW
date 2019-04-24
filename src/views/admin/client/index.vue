@@ -145,7 +145,6 @@ export default {
   created () {
     this.getList()
   },
-  mounted: function () {},
   methods: {
     getList () {
       this.tableLoading = true
@@ -169,6 +168,10 @@ export default {
     handleAdd: function () {
       if (this.$refs.form) {
         this.$refs.form.resetFields()
+        this.form = {
+          scope: [],
+          authorizedGrantTypes: []
+        }
       }
       this.dialogFormVisible = true
       this.dialogStatus = 'create'
@@ -270,9 +273,16 @@ export default {
       })
     },
     dialogClose (done) {
-      this.$refs.form.resetFields()
+      if (this.$refs.form) {
+        this.$refs.form.resetFields()
+        this.form = {
+          scope: [],
+          authorizedGrantTypes: []
+        }
+      }
       this.scope = []
       this.authorizedGrantTypes = []
+      this.getList()
       done()
     }
   }

@@ -73,6 +73,15 @@ const frameIn = [
         component: () => import('@/views/admin/role')
       },
       {
+        path: 'auth',
+        name: 'auth',
+        meta: {
+          requiresAuth: true,
+          title: '权限管理'
+        },
+        component: () => import('@/views/admin/auth')
+      },
+      {
         path: 'log',
         name: 'log',
         meta: {
