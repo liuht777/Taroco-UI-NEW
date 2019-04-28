@@ -47,8 +47,10 @@ new Vue({
     // 监听路由 控制侧边栏显示
     '$route.matched' (val) {
       const allMenu = this.$store.getters.menu
-      const _side = allMenu.filter(menu => menu.path === val[0].path)
-      this.$store.commit('d2admin/menu/asideSet', _side.length > 0 ? _side : [])
+      if (allMenu) {
+        const _side = allMenu.filter(menu => menu.path === val[0].path)
+        this.$store.commit('d2admin/menu/asideSet', _side.length > 0 ? _side : [])
+      }
     }
   }
 }).$mount('#app')

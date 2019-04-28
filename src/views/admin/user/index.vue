@@ -191,6 +191,17 @@ export default {
             max: 20,
             message: '长度在 3 到 20 个字符',
             trigger: 'blur'
+          },
+          {
+            trigger: 'blur',
+            validator: (rule, value, callback) => {
+              const reg = /^[a-zA-Z0-9]+$/
+              if (!reg.test(value)) {
+                callback(new Error('只能包含英文和数字'))
+              } else {
+                callback()
+              }
+            }
           }
         ],
         newpassword1: [

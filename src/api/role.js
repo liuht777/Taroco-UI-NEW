@@ -52,7 +52,7 @@ export function delObj (id) {
   })
 }
 
-export function permissionUpd (roleId, menuIds) {
+export function roleMenuUpd (roleId, menuIds) {
   return request({
     url: '/admin/role/roleMenuUpd',
     method: 'put',
@@ -75,5 +75,61 @@ export function fetchDeptTree (query) {
     url: '/admin/dept/tree',
     method: 'get',
     params: query
+  })
+}
+
+// 成员设置
+export function roleMembersUpd (roleId, userIds, operate) {
+  return request({
+    url: `/admin/role/members/${operate}`,
+    method: 'put',
+    data: {
+      roleId,
+      userIds
+    }
+  })
+}
+
+export function roleMembersAdded (roleId, params) {
+  return request({
+    url: `/admin/role/members/added/${roleId}`,
+    method: 'get',
+    params
+  })
+}
+
+export function roleMembersNotin (roleId, params) {
+  return request({
+    url: `/admin/role/members/notin/${roleId}`,
+    method: 'get',
+    params
+  })
+}
+
+// 权限设置
+export function rolePermissionsUpd (roleId, permissionIds, operate) {
+  return request({
+    url: `/admin/role/permissions/${operate}`,
+    method: 'put',
+    data: {
+      roleId,
+      permissionIds
+    }
+  })
+}
+
+export function rolePermissionsAdded (roleId, params) {
+  return request({
+    url: `/admin/role/permissions/added/${roleId}`,
+    method: 'get',
+    params
+  })
+}
+
+export function rolePermissionsNotin (roleId, params) {
+  return request({
+    url: `/admin/role/permissions/notin/${roleId}`,
+    method: 'get',
+    params
   })
 }

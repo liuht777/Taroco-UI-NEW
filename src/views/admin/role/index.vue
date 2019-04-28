@@ -64,11 +64,13 @@
       </template>
     </el-table-column>
 
-    <el-table-column label="操作" width="220">
+    <el-table-column label="操作" width="320" fixed="right">
       <template slot-scope="scope">
         <el-button size="mini" type="primary" @click="handleUpdate(scope.row)" icon="el-icon-edit"></el-button>
         <el-button size="mini" type="danger" @click="handleDelete(scope.row)" icon="el-icon-delete"></el-button>
-        <el-button size="mini" type="success" plain @click="handleMenu(scope.row)" icon="el-icon-menu"></el-button>
+        <el-button size="mini" type="success" @click="handleMenu(scope.row)">菜单</el-button>
+        <el-button size="mini" type="default" @click="handleUserSet(scope.row)">成员</el-button>
+        <el-button size="mini" type="warning" @click="handlePermissionSet(scope.row)">权限</el-button>
       </template>
     </el-table-column>
   </el-table>
@@ -109,6 +111,9 @@
     </div>
   </el-dialog>
 
+  <ta-role-member-set ref="roleMemberSet"/>
+  <ta-role-permission-set ref="rolePermissionSet"/>
+
   <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogDeptVisible" width="600px">
     <el-tree class="filter-tree" :data="treeDeptData" :default-checked-keys="checkedKeys" check-strictly node-key="id" highlight-current ref="deptTree" @node-click="getNodeData" :props="defaultProps" :filter-node-method="filterNode" default-expand-all>
     </el-tree>
@@ -131,7 +136,7 @@ import {
   addObj,
   putObj,
   delObj,
-  permissionUpd,
+  roleMenuUpd,
   fetchRoleTree,
   fetchDeptTree
 } from '@/api/role'
@@ -289,7 +294,6 @@ export default {
       this.dialogDeptVisible = false
       this.form.roleDeptId = data.id
       this.form.roleDeptName = data.name
-      console.log(data)
     },
     handleDelete (row) {
       this.$confirm(
@@ -357,7 +361,7 @@ export default {
       })
     },
     updateRoleMenu (roleId, roleCode) {
-      permissionUpd(roleId, this.$refs.menuTree.getCheckedKeys()).then(() => {
+      roleMenuUpd(roleId, this.$refs.menuTree.getCheckedKeys()).then(() => {
         this.dialogPermissionVisible = false
         fetchTree()
           .then(response => {
@@ -382,6 +386,12 @@ export default {
         roleCode: undefined,
         roleDesc: undefined
       }
+    },
+    handleUserSet (row) {
+      this.$refs.roleMemberSet.init(row.roleId)
+    },
+    handlePermissionSet (row) {
+      this.$refs.rolePermissionSet.init(row.roleId)
     }
   }
 }

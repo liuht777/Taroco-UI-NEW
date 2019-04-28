@@ -144,6 +144,15 @@ const frameIn = [
           title: '接口文档'
         },
         component: () => import('@/views/service/swagger')
+      },
+      {
+        path: 'taroco-governance',
+        name: 'taroco-governance',
+        meta: {
+          requiresAuth: true,
+          title: '服务治理'
+        },
+        component: () => import('@/views/service/governance')
       }
     ]
   }

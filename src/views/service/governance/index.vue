@@ -3,10 +3,10 @@
 </template>
 <script>
 export default {
-  name: 'Taroco-Zipkin',
+  name: 'Taroco-Governance',
   data () {
     return {
-      src: `${process.env.VUE_APP_ZIPKIN_URL}`
+      src: `${process.env.VUE_APP_GOVERNANCE_URL}`
     }
   }
 }
