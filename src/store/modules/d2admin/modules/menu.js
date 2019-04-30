@@ -36,14 +36,6 @@ export default {
      * @param {Array} menu menu setting
      */
     async asideSet (state, menu) {
-      if (validatenull(menu)) {
-        menu = await this.dispatch('d2admin/db/get', {
-          dbName: 'sys',
-          path: 'user.menu',
-          defaultValue: null,
-          user: true
-        })
-      }
       state.aside = util.initAsideMenu(menu)
     },
     /**

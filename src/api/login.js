@@ -21,16 +21,6 @@ export const loginByUsername = (username, password, code, randomStr) => {
 }
 
 /**
- * 获取用户信息
- */
-export const getUserInfo = () => {
-  return request({
-    url: '/admin/user/info',
-    method: 'get'
-  })
-}
-
-/**
  * 退出登录
  * @param {请求token} accesstoken
  */

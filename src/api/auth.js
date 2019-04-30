@@ -1,16 +1,8 @@
 import request from '@/plugin/axios'
 
-export function listAll (query) {
+export function fetchList (query) {
   return request({
-    url: '/admin/dept/list',
-    method: 'get',
-    params: query
-  })
-}
-
-export function fetchTree (query) {
-  return request({
-    url: '/admin/dept/tree',
+    url: '/admin/permission/page',
     method: 'get',
     params: query
   })
@@ -18,7 +10,7 @@ export function fetchTree (query) {
 
 export function addObj (obj) {
   return request({
-    url: '/admin/dept/',
+    url: '/admin/permission',
     method: 'post',
     data: obj
   })
@@ -26,21 +18,21 @@ export function addObj (obj) {
 
 export function getObj (id) {
   return request({
-    url: '/admin/dept/' + id,
+    url: '/admin/permission/' + id,
     method: 'get'
   })
 }
 
 export function delObj (id) {
   return request({
-    url: '/admin/dept/' + id,
+    url: '/admin/permission/' + id,
     method: 'delete'
   })
 }
 
 export function putObj (obj) {
   return request({
-    url: '/admin/dept/',
+    url: '/admin/permission',
     method: 'put',
     data: obj
   })

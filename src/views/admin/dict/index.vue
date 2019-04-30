@@ -15,7 +15,7 @@
             <el-button type="default" icon="el-icon-search" @click="handleFilter">搜 索</el-button>
           </el-form-item>
           <el-form-item style="float: right">
-            <el-button v-if="sys_dict_add" style="float: right" @click="handleCreate" type="primary" icon="el-icon-plus">新 增</el-button>
+            <el-button style="float: right" @click="handleCreate" type="primary" icon="el-icon-plus">新 增</el-button>
           </el-form-item>
       </el-form>
     </template>
@@ -69,8 +69,8 @@
       </el-table-column>
       <el-table-column label="操作" width="200">
         <template slot-scope="scope">
-          <el-button v-if="sys_dict_upd" size="mini" type="success" @click="handleUpdate(scope.row)" icon="el-icon-edit"></el-button>
-          <el-button v-if="sys_dict_del" size="mini" type="danger" @click="handleDelete(scope.row)" icon="el-icon-delete"></el-button>
+          <el-button size="mini" type="success" @click="handleUpdate(scope.row)" icon="el-icon-edit"></el-button>
+          <el-button size="mini" type="danger" @click="handleDelete(scope.row)" icon="el-icon-delete"></el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -123,7 +123,6 @@
 
 <script>
 import { fetchList, addObj, putObj, delObj } from '@/api/dict'
-import { mapGetters } from 'vuex'
 
 export default {
   name: 'table_sys_dict',
@@ -193,9 +192,6 @@ export default {
       tableKey: 0
     }
   },
-  computed: {
-    ...mapGetters(['permissions'])
-  },
   filters: {
     statusFilter (status) {
       const statusMap = {
@@ -207,9 +203,6 @@ export default {
   },
   created () {
     this.getList()
-    this.sys_dict_add = this.permissions['sys_dict_add']
-    this.sys_dict_upd = this.permissions['sys_dict_upd']
-    this.sys_dict_del = this.permissions['sys_dict_del']
   },
   methods: {
     getList () {
@@ -235,14 +228,24 @@ export default {
       this.getList()
     },
     handleDelete (row) {
-      delObj(row).then(response => {
-        this.dialogFormVisible = false
-        this.getList()
-        this.$notify({
-          title: '成功',
-          message: '删除成功',
-          type: 'success',
-          duration: 2000
+      this.$confirm(
+        '是否确认删除?',
+        '提示',
+        {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }
+      ).then(() => {
+        delObj(row).then(response => {
+          this.dialogFormVisible = false
+          this.getList()
+          this.$notify({
+            title: '成功',
+            message: '删除成功',
+            type: 'success',
+            duration: 2000
+          })
         })
       })
     },

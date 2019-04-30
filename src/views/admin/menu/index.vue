@@ -1,238 +1,155 @@
 <template>
   <d2-container>
-    <!-- header按钮组 -->
+    <!-- header 查询条件 -->
     <template slot="header">
-      <el-button-group>
-        <el-button size="mini" type="primary" v-if="menuManager_btn_add" icon="el-icon-plus" @click="handlerAdd">新 增</el-button>
-        <el-button size="mini" type="primary" v-if="menuManager_btn_edit" icon="el-icon-edit" @click="handlerEdit">编 辑</el-button>
-        <el-button size="mini" type="primary" v-if="menuManager_btn_del" icon="el-icon-delete" @click="handleDelete">删 除</el-button>
-      </el-button-group>
-    </template>
-    <el-row>
-      <el-col :span="8">
-        <el-tree
-          class="filter-tree"
-          node-key="id"
-          highlight-current
-          :data="treeData"
-          :default-expanded-keys="aExpandedKeys"
-          :filter-node-method="filterNode"
-          :props="defaultProps"
-          @node-click="getNodeData"
-          @node-expand="nodeExpand"
-          @node-collapse="nodeCollapse"
-        >
-        </el-tree>
-      </el-col>
-      <el-col :span="16">
-        <el-form :label-position="labelPosition" label-width="80px" :model="form" ref="form">
-          <el-form-item label="父级节点" prop="parentId">
-            <el-input v-model="form.parentId" :disabled="true" placeholder="请输入父级节点"></el-input>
-          </el-form-item>
-          <el-form-item label="节点ID" prop="menuId">
-            <el-input v-model="form.menuId" :disabled="formEdit" placeholder="请输入节点ID"></el-input>
-          </el-form-item>
-          <el-form-item label="标题" prop="name">
-            <el-input v-model="form.name" :disabled="formEdit"  placeholder="请输入标题"></el-input>
-          </el-form-item>
-          <el-form-item label="权限标识" prop="permission">
-            <el-input v-model="form.permission" :disabled="formEdit" placeholder="请输入权限标识"></el-input>
-          </el-form-item>
-          <el-form-item label="图标" prop="icon">
-            <!-- <el-input v-model="form.icon" :disabled="formEdit" placeholder="请输入图标"></el-input> -->
-            <d2-icon-select v-model="form.icon" placeholder="请选择图标"></d2-icon-select>
-          </el-form-item>
-          <el-form-item label="资源路径" prop="url">
-            <el-input v-model="form.url" :disabled="formEdit" placeholder="请输入资源路径"></el-input>
-          </el-form-item>
-          <el-form-item label="请求方法" prop="method">
-            <el-select class="filter-item" v-model="form.method"  :disabled="formEdit"  placeholder="请输入资源请求类型">
-              <el-option v-for="item in  methodOptions" :key="item" :label="item" :value="item"> </el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item label="类型" prop="type">
-            <el-select class="filter-item" v-model="form.type"  :disabled="formEdit"  placeholder="请输入资源请求类型">
-              <el-option v-for="item in typeOptions" :key="item" :label="item | typeFilter" :value="item"> </el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item label="排序" prop="sort">
-            <el-input v-model="form.sort" :disabled="formEdit" placeholder="请输入排序"></el-input>
-          </el-form-item>
-          <el-form-item label="前端组件"   prop="component">
-            <el-input v-model="form.component" :disabled="formEdit" placeholder="请输入描述"></el-input>
-          </el-form-item>
-          <el-form-item label="前端地址"   prop="component">
-            <el-input v-model="form.path" :disabled="formEdit" placeholder="iframe嵌套地址"></el-input>
-          </el-form-item>
-        </el-form>
-      </el-col>
-    </el-row>
-    <!-- footer -->
-    <template slot="footer" v-if="formStatus == 'create'">
-      <div style="margin:-5px; text-align:center">
-        <el-button size="small" @click="onCancel" icon="el-icon-close">取消</el-button>
-        <el-button size="small" type="primary" @click="create" icon="el-icon-check">保 存</el-button>
+      <el-button size="mini" type="default" @click="getList" icon="el-icon-refresh">刷新</el-button>
+      <div style="float: right">
+        <el-button size="mini" type="primary" @click="handleAdd" icon="el-icon-plus">新 增</el-button>
       </div>
     </template>
-    <template slot="footer" v-if="formStatus == 'update'">
-      <div style="margin:-5px; text-align:center">
-        <el-button size="small" @click="onCancel" icon="el-icon-close">取消</el-button>
-        <el-button size="small" type="primary" @click="update" icon="el-icon-check">更 新</el-button>
+    <tree-table :data="treeData">
+     <el-table-column label="名称">
+        <template slot-scope="scope">
+          <span>{{ scope.row.name }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="路径">
+        <template slot-scope="scope">
+          <span>{{ scope.row.path }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="图标" width="80">
+        <template slot-scope="scope">
+          <i :class="`fa fa-${scope.row.icon}`"></i>
+        </template>
+      </el-table-column>
+      <el-table-column label="排序" width="80">
+        <template slot-scope="scope">
+          <span>{{ scope.row.sort }}</span>
+        </template>
+      </el-table-column>
+     <el-table-column label="操作" width="160">
+        <template slot-scope="scope">
+          <el-button type="primary" icon="el-icon-edit" size="mini" @click="handleEdit(scope.row.id)"></el-button>
+          <el-button size="mini" type="danger" @click="handleDelete(scope.row.id)" icon="el-icon-delete"></el-button>
+        </template>
+      </el-table-column>
+    </tree-table>
+    <!-- 新增菜单弹框 -->
+    <el-dialog title="新增/编辑菜单" :visible.sync="dialogFormVisible" width="400px">
+      <el-form :model="form" :rules="rules" ref="form" label-width="100px">
+        <el-form-item label="上级菜单" prop="parentId">
+          <el-select v-model="form.parentId" placeholder="不选默认顶级菜单" style="width:100%">
+            <el-option label="顶级菜单" :value="-1" />
+            <el-option
+              v-for="item in treeData"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="菜单名称" prop="name">
+          <el-input v-model="form.name" placeholder="最多输入50个字符"></el-input>
+        </el-form-item>
+        <el-form-item label="菜单路径" prop="path">
+          <el-input v-model="form.path" placeholder="最多输入255个字符"></el-input>
+        </el-form-item>
+        <el-form-item label="图标" prop="icon">
+          <d2-icon-select v-model="form.icon" placeholder="请选择图标"></d2-icon-select>
+        </el-form-item>
+        <el-form-item label="排序" prop="sort">
+          <el-input v-model.number="form.sort" placeholder="只能输入正整数, 最大999"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="onCancel" icon="el-icon-close">取 消</el-button>
+        <el-button type="primary" @click="submit" icon="el-icon-check">确 定</el-button>
       </div>
-    </template>
+    </el-dialog>
   </d2-container>
 </template>
 
 <script>
 import { fetchTree, getObj, addObj, delObj, putObj } from '@/api/menu'
-import { mapGetters } from 'vuex'
 export default {
   name: 'user-menu',
   data () {
+    const validateSort = (rule, value, callback) => {
+      if (!value) {
+        callback()
+        return
+      }
+      if (!Number.isInteger(value)) {
+        callback(new Error('请输入数字值'))
+      } else {
+        if (value < 1 || value > 999) {
+          callback(new Error('大小在 1 到 999 之间'))
+        } else {
+          callback()
+        }
+      }
+    }
     return {
-      list: null,
-      total: null,
-      formEdit: true,
-      formAdd: true,
-      formStatus: '',
-      showElement: false,
-      typeOptions: ['0', '1'],
-      methodOptions: ['GET', 'POST', 'PUT', 'DELETE'],
-      listQuery: {
-        name: undefined
-      },
+      dialogFormVisible: false,
       treeData: [],
-      oExpandedKey: {
-        // key (from tree id) : expandedOrNot boolean
-      },
-      oTreeNodeChildren: {
-        // id1 : [children] (from tree node id1)
-        // id2 : [children] (from tree node id2)
-      },
-      aExpandedKeys: [],
-      defaultProps: {
-        children: 'children',
-        label: 'name'
-      },
-      labelPosition: 'right',
       form: {
-        permission: undefined,
+        id: undefined,
         name: undefined,
-        menuId: undefined,
         parentId: undefined,
         url: undefined,
         icon: undefined,
-        sort: undefined,
-        component: undefined,
-        type: undefined,
-        method: undefined,
+        sort: 99,
         path: undefined
       },
-      currentId: -1,
-      menuManager_btn_add: false,
-      menuManager_btn_edit: false,
-      menuManager_btn_del: false
-    }
-  },
-  filters: {
-    typeFilter (type) {
-      const typeMap = {
-        0: '菜单',
-        1: '按钮'
+      rules: {
+        name: [
+          { required: true, message: '请输入菜单名称', trigger: 'blur' },
+          { min: 2, max: 50, message: '长度在 2 到 50 个字符', trigger: 'blur' }
+        ],
+        path: [
+          { required: true, message: '请输入菜单路径', trigger: 'blur' },
+          { min: 2, max: 255, message: '长度在 2 到 255 个字符', trigger: 'blur' }
+        ],
+        icon: [
+          { required: true, message: '请选择菜单图标', trigger: 'change' }
+        ],
+        sort: [
+          { validator: validateSort, trigger: 'blur' }
+        ]
       }
-      return typeMap[type]
     }
   },
   created () {
     this.getList()
-    this.menuManager_btn_add = this.permissions['sys_menu_add']
-    this.menuManager_btn_edit = this.permissions['sys_menu_edit']
-    this.menuManager_btn_del = this.permissions['sys_menu_del']
   },
   computed: {
-    ...mapGetters([
-      'elements',
-      'permissions'
-    ])
   },
   methods: {
     getList () {
-      fetchTree(this.listQuery).then(response => {
+      fetchTree().then(response => {
         this.treeData = response.data
       })
     },
-    filterNode (value, data) {
-      // console.log(value);
-      if (!value) return true
-      return data.label.indexOf(value) !== -1
+    // 新增菜单
+    handleAdd () {
+      this.dialogFormVisible = true
     },
-
-    nodeExpand (data) {
-      let aChildren = data.children
-      if (aChildren.length > 0) {
-        this.oExpandedKey[data.id] = true
-        this.oTreeNodeChildren[data.id] = aChildren
-      }
-      this.setExpandedKeys()
-    },
-    nodeCollapse (data) {
-      this.oExpandedKey[data.id] = false
-      // 如果有子节点
-      this.treeRecursion(this.oTreeNodeChildren[data.id], (oNode) => {
-        this.oExpandedKey[oNode.id] = false
+    // 编辑菜单
+    handleEdit (id) {
+      getObj(id).then((data) => {
+        this.form = data.data
+        this.dialogFormVisible = true
       })
-      this.setExpandedKeys()
     },
-    setExpandedKeys () {
-      let oTemp = this.oExpandedKey
-      this.aExpandedKeys = []
-      for (let sKey in oTemp) {
-        if (oTemp[sKey]) {
-          this.aExpandedKeys.push(parseInt(sKey))
-        }
-      }
-    },
-    treeRecursion (aChildren, fnCallback) {
-      if (aChildren) {
-        for (let i = 0; i < aChildren.length; ++i) {
-          let oNode = aChildren[i]
-          fnCallback && fnCallback(oNode)
-          this.treeRecursion(oNode.children, fnCallback)
-        }
-      }
-    },
-
-    getNodeData (data) {
-      if (!this.formEdit) {
-        this.formStatus = 'update'
-      }
-      getObj(data.id).then(response => {
-        this.form = response.data
-      })
-      this.currentId = data.id
-      this.showElement = true
-    },
-    handlerEdit () {
-      if (this.form.menuId) {
-        this.formEdit = false
-        this.formStatus = 'update'
-      }
-    },
-    handlerAdd () {
-      this.resetForm()
-      this.formEdit = false
-      this.formStatus = 'create'
-    },
-    handleDelete () {
+    handleDelete (id) {
       this.$confirm('此操作将永久删除, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        delObj(this.currentId).then(() => {
+        delObj(id).then(() => {
           this.getList()
-          this.resetForm()
-          this.onCancel()
           this.$notify({
             title: '成功',
             message: '删除成功',
@@ -242,8 +159,23 @@ export default {
         })
       })
     },
+    submit () {
+      this.$refs.form.validate((valid) => {
+        if (valid) {
+          if (!this.form.parentId) {
+            this.form.parentId = -1
+          }
+          if (!this.form.id) {
+            this.create()
+          } else {
+            this.update()
+          }
+        }
+      })
+    },
     update () {
       putObj(this.form).then(() => {
+        this.onCancel()
         this.getList()
         this.$notify({
           title: '成功',
@@ -255,6 +187,7 @@ export default {
     },
     create () {
       addObj(this.form).then(() => {
+        this.onCancel()
         this.getList()
         this.$notify({
           title: '成功',
@@ -265,23 +198,11 @@ export default {
       })
     },
     onCancel () {
-      this.formEdit = true
-      this.formStatus = ''
+      this.dialogFormVisible = false
+      this.resetForm()
     },
     resetForm () {
-      this.form = {
-        permission: undefined,
-        name: undefined,
-        menuId: undefined,
-        parentId: this.currentId,
-        url: undefined,
-        icon: undefined,
-        sort: undefined,
-        component: undefined,
-        type: undefined,
-        method: undefined,
-        path: undefined
-      }
+      this.$refs.form.resetFields()
     }
   }
 }

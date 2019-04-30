@@ -1,5 +1,5 @@
 import util from '@/libs/util.js'
-import {loginByUsername, getUserInfo, logout} from '@/api/login'
+import { loginByUsername, logout } from '@/api/login'
 import { GetMenu } from '@/api/menu'
 import { frameInRoutes } from '@/router/routes'
 
@@ -27,47 +27,29 @@ export default {
           // 设置 vuex token信息
           commit('d2admin/user/SET_ACCESS_TOKEN', res.data.access_token, { root: true })
           commit('d2admin/user/SET_REFRESH_TOKEN', res.data.refresh_token, { root: true })
+          commit('d2admin/user/SET_USER_INFO', {username: res.data['x-user-name']}, { root: true })
+          commit('d2admin/user/SET_ROLES', res.data['x-user-role'], { root: true })
+          commit('d2admin/user/SET_PERMISSIONS', res.data['x-user-permission'], { root: true })
           // 用户登陆后从持久化数据加载一系列的设置
           commit('load')
-          // 用户登陆后查询用户信息: 角色 数据权限
-          dispatch('getUserInfo')
-            .then(res => {
-              GetMenu().then(res => {
-                // 设置用户菜单
-                commit('d2admin/user/SET_MENU', res.data, { root: true })
-                let oRoutes = util.formatRoutes(res.data)
-                // 多页面控制: 处理路由 得到每一级的路由设置
-                commit('d2admin/page/init', [].concat(frameInRoutes, oRoutes), { root: true })
-                // 设置侧边栏菜单
-                commit('d2admin/menu/asideSet', res.data, { root: true })
-                // 设置顶栏菜单
-                commit('d2admin/menu/headerSet', res.data, { root: true })
-                vm.$router.addRoutes(oRoutes)
-                // 跳转路由
-                vm.$router.push({
-                  name: 'index'
-                })
-              })
+          GetMenu().then(res => {
+            // 设置用户菜单
+            commit('d2admin/user/SET_MENU', res.data, { root: true })
+            // 多页面控制: 处理路由 得到每一级的路由设置
+            commit('d2admin/page/init', frameInRoutes, { root: true })
+            // 设置顶栏菜单
+            commit('d2admin/menu/headerSet', res.data, { root: true })
+            // 跳转路由
+            vm.$router.push({
+              name: 'index'
             })
+          })
         })
         .catch(err => {
           console.group('登陆出错')
           console.log('err: ', err)
           console.groupEnd()
         })
-    },
-    getUserInfo ({ commit }) {
-      return new Promise((resolve, reject) => {
-        getUserInfo().then(response => {
-          const data = response.data.result
-          commit('d2admin/user/SET_USER_INFO', data.sysUser, { root: true })
-          commit('d2admin/user/SET_ROLES', data.roles, { root: true })
-          commit('d2admin/user/SET_PERMISSIONS', data.permissions, { root: true })
-          resolve(response)
-        }).catch(error => {
-          reject(error)
-        })
-      })
     },
     /**
      * @description 注销用户并返回登陆页面

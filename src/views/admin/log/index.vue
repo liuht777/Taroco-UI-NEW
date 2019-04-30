@@ -65,12 +65,6 @@
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="花费时间">
-        <template slot-scope="scope">
-          <span>{{ scope.row.time}}</span>
-        </template>
-      </el-table-column>
-
       <el-table-column align="center" label="记录时间">
         <template slot-scope="scope">
           <span>{{ scope.row.createTime | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
@@ -79,7 +73,7 @@
 
       <el-table-column align="center" label="操作">
         <template slot-scope="scope">
-          <el-button size="mini" type="danger" v-if="sys_log_del" @click="handleDelete(scope.row)" icon="el-icon-delete"></el-button>
+          <el-button size="mini" type="danger" @click="handleDelete(scope.row)" icon="el-icon-delete"></el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -102,7 +96,6 @@
 
 <script>
 import { delObj, fetchList } from '@/api/log'
-import { mapGetters } from 'vuex'
 
 export default {
   name: 'table_log',
@@ -120,12 +113,8 @@ export default {
       tableKey: 0
     }
   },
-  computed: {
-    ...mapGetters(['permissions'])
-  },
   created () {
     this.getList()
-    this.sys_log_del = this.permissions['sys_log_del']
   },
   methods: {
     getSerialNumber (index) {

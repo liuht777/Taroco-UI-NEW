@@ -15,7 +15,7 @@
             <el-button type="default" @click="handleFilter" icon="el-icon-search">搜 索</el-button>
           </el-form-item>
           <el-form-item style="float: right">
-            <el-button v-if="sys_user_add" @click="handleCreate" type="primary" icon="el-icon-plus">新 增</el-button>
+            <el-button @click="handleCreate" type="primary" icon="el-icon-plus">新 增</el-button>
           </el-form-item>
       </el-form>
     </template>
@@ -68,7 +68,7 @@
 
       <el-table-column align="center" label="标签">
         <template slot-scope="scope">
-          <span>{{scope.row.label}}</span>
+          <el-tag v-if="scope.row.label" type="success">{{scope.row.label}}</el-tag>
         </template>
       </el-table-column>
 
@@ -80,8 +80,8 @@
 
       <el-table-column align="center" label="操作" width="200">
         <template slot-scope="scope">
-          <el-button v-if="sys_user_upd" size="mini" type="primary" @click="handleUpdate(scope.row)" icon="el-icon-edit"></el-button>
-          <el-button v-if="sys_user_del" size="mini" type="danger" @click="deletes(scope.row)" icon="el-icon-delete"></el-button>
+          <el-button size="mini" type="primary" @click="handleUpdate(scope.row)" icon="el-icon-edit"></el-button>
+          <el-button size="mini" type="danger" @click="deletes(scope.row)" icon="el-icon-delete"></el-button>
         </template>
       </el-table-column>
 
@@ -116,18 +116,9 @@
           <el-input type="password" v-model="form.newpassword1"></el-input>
         </el-form-item>
 
-        <el-form-item label="所属部门" prop="deptName">
+        <el-form-item label="所属部门" prop="deptId">
           <el-input v-model="form.deptName" placeholder="选择部门" @focus="handleDept()" readonly></el-input>
           <input type="hidden" v-model="form.deptId" />
-        </el-form-item>
-
-        <el-form-item label="角色" prop="role">
-          <el-select  v-model="role" placeholder="请选择" multiple>
-            <el-option v-for="item in rolesOptions" :key="item.roleId" :label="item.roleDesc" :value="item.roleId" :disabled="isDisabled[item.delFlag]">
-              <span style="float: left">{{ item.roleDesc }}</span>
-              <span style="float: right; color: #8492a6; font-size: 13px">{{ item.roleCode }}</span>
-            </el-option>
-          </el-select>
         </el-form-item>
 
         <el-form-item label="手机号" prop="phone">
@@ -138,7 +129,7 @@
           <el-input v-model="form.label" placeholder="多个标签 ',' 隔开"></el-input>
         </el-form-item>
 
-        <el-form-item label="状态" v-if="dialogStatus == 'update' && sys_user_del " prop="delFlag">
+        <el-form-item label="状态" v-if="dialogStatus == 'update'" prop="delFlag">
           <el-select v-model="form.delFlag" placeholder="请选择">
             <el-option v-for="item in statusOptions" :key="item" :label="item | statusFilter" :value="item"> </el-option>
           </el-select>
@@ -155,8 +146,7 @@
 
 <script>
 import { fetchList, getObj, addObj, putObj, delObj } from '@/api/user'
-import { deptRoleList, fetchDeptTree } from '@/api/role'
-import { mapGetters } from 'vuex'
+import { fetchDeptTree } from '@/api/role'
 import ElRadioGroup from 'element-ui/packages/radio/src/radio-group'
 import ElOption from 'element-ui/packages/select/src/option'
 
@@ -181,7 +171,6 @@ export default {
         page: 1,
         limit: 10
       },
-      role: [],
       form: {
         username: undefined,
         newpassword1: undefined,
@@ -202,6 +191,17 @@ export default {
             max: 20,
             message: '长度在 3 到 20 个字符',
             trigger: 'blur'
+          },
+          {
+            trigger: 'blur',
+            validator: (rule, value, callback) => {
+              const reg = /^[a-zA-Z0-9]+$/
+              if (!reg.test(value)) {
+                callback(new Error('只能包含英文和数字'))
+              } else {
+                callback()
+              }
+            }
           }
         ],
         newpassword1: [
@@ -224,13 +224,6 @@ export default {
             trigger: 'blur'
           }
         ],
-        role: [
-          {
-            required: true,
-            message: '请选择角色',
-            trigger: 'blur'
-          }
-        ],
         phone: [
           {
             required: true,
@@ -246,7 +239,6 @@ export default {
         ]
       },
       statusOptions: ['0', '1'],
-      rolesOptions: [],
       dialogFormVisible: false,
       dialogDeptVisible: false,
       userAdd: false,
@@ -264,9 +256,6 @@ export default {
       tableKey: 0
     }
   },
-  computed: {
-    ...mapGetters(['permissions'])
-  },
   filters: {
     statusFilter (status) {
       const statusMap = {
@@ -279,17 +268,14 @@ export default {
   },
   created () {
     this.getList()
-    this.sys_user_add = this.permissions['sys_user_add']
-    this.sys_user_upd = this.permissions['sys_user_upd']
-    this.sys_user_del = this.permissions['sys_user_del']
   },
   methods: {
     getList () {
       this.listLoading = true
-      this.listQuery.isAsc = false
       fetchList(this.listQuery).then(response => {
         this.list = response.data.records
         this.total = response.data.total
+      }).finally(() => {
         this.listLoading = false
       })
     },
@@ -297,9 +283,6 @@ export default {
       this.dialogDeptVisible = false
       this.form.deptId = data.id
       this.form.deptName = data.name
-      deptRoleList(data.id).then(response => {
-        this.rolesOptions = response.data
-      })
     },
     handleDept () {
       fetchDeptTree().then(response => {
@@ -329,30 +312,26 @@ export default {
         this.form = response.data
         this.dialogFormVisible = true
         this.dialogStatus = 'update'
-        this.role = []
-        for (var i = 0; i < row.roleList.length; i++) {
-          this.role[i] = row.roleList[i].roleId
-        }
-        deptRoleList(response.data.deptId).then(response => {
-          this.rolesOptions = response.data
-        })
       })
     },
     create (formName) {
       const set = this.$refs
-      this.form.role = this.role
       set[formName].validate(valid => {
         if (valid) {
-          addObj(this.form).then(() => {
-            this.dialogFormVisible = false
-            this.getList()
-            this.$notify({
-              title: '成功',
-              message: '创建成功',
-              type: 'success',
-              duration: 2000
-            })
+          addObj(this.form).then(({data}) => {
+            if (data.status === 'SUCCEED') {
+              this.getList()
+              this.$notify({
+                title: '成功',
+                message: '创建成功',
+                type: 'success',
+                duration: 2000
+              })
+            }
           })
+            .finally(() => {
+              this.dialogFormVisible = false
+            })
         } else {
           return false
         }
@@ -364,21 +343,24 @@ export default {
     },
     update (formName) {
       const set = this.$refs
-      this.form.role = this.role
       set[formName].validate(valid => {
         if (valid) {
           this.dialogFormVisible = false
           this.form.password = undefined
-          putObj(this.form).then(() => {
-            this.dialogFormVisible = false
-            this.getList()
-            this.$notify({
-              title: '成功',
-              message: '修改成功',
-              type: 'success',
-              duration: 2000
-            })
+          putObj(this.form).then(({data}) => {
+            if (data.status === 'SUCCEED') {
+              this.getList()
+              this.$notify({
+                title: '成功',
+                message: '修改成功',
+                type: 'success',
+                duration: 2000
+              })
+            }
           })
+            .finally(() => {
+              this.dialogFormVisible = false
+            })
         } else {
           return false
         }
@@ -395,22 +377,19 @@ export default {
         }
       ).then(() => {
         delObj(row.userId)
-          .then(() => {
-            this.getList()
-            this.$notify({
-              title: '成功',
-              message: '删除成功',
-              type: 'success',
-              duration: 2000
-            })
+          .then(({data}) => {
+            if (data.status === 'SUCCEED') {
+              this.getList()
+              this.$notify({
+                title: '成功',
+                message: '删除成功',
+                type: 'success',
+                duration: 2000
+              })
+            }
           })
-          .cache(() => {
-            this.$notify({
-              title: '失败',
-              message: '删除失败',
-              type: 'error',
-              duration: 2000
-            })
+          .finally(() => {
+            this.dialogFormVisible = false
           })
       })
     },
@@ -419,7 +398,6 @@ export default {
         id: undefined,
         username: '',
         password: '',
-        role: [],
         delFlag: '',
         deptId: '',
         phone: ''

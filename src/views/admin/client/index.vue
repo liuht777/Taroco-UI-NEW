@@ -4,7 +4,7 @@
     <template slot="header">
       <el-button size="mini" type="default" @click="getList" icon="el-icon-refresh">刷新</el-button>
       <div style="float: right">
-        <el-button size="mini" type="primary" @click="handleAdd" v-if="permissions.sys_client_add" icon="el-icon-plus">新 增</el-button>
+        <el-button size="mini" type="primary" @click="handleAdd" icon="el-icon-plus">新 增</el-button>
       </div>
     </template>
     <!-- table表格 -->
@@ -15,14 +15,11 @@
               highlight-current-row
               stripe
               style="width: 100%">
-      <el-table-column align="center" prop="clientId" label="客户端ID" />
+      <el-table-column align="left" prop="clientId" label="客户端ID" />
       <el-table-column align="center" prop="clientSecret" label="客户端密钥" />
-      <el-table-column align="center" prop="scope" label="Scopes" />
+      <el-table-column align="center" prop="scope" label="授权范围" />
       <el-table-column align="center" prop="authorizedGrantTypes" label="授权模式" />
       <el-table-column align="center" prop="webServerRedirectUri" label="回调地址" />
-      <!-- <el-table-column align="center" prop="accessTokenValidity" label="令牌有效时间(ms)" />
-      <el-table-column align="center" prop="refreshTokenValidity" label="令牌刷新时间(ms)" /> -->
-      <!-- <el-table-column align="center" prop="additionalInformation" label="扩展信息" /> -->
       <el-table-column align="center" label="自动认证" width="80">
         <template slot-scope="scope">
           <el-tag v-if="scope.row.autoapprove === 'false'" type="warning">否</el-tag>
@@ -31,8 +28,8 @@
       </el-table-column>
       <el-table-column align="center" label="操作" width="200">
         <template slot-scope="scope">
-          <el-button type="primary" v-if="permissions.sys_route_upd" icon="el-icon-edit" size="mini" @click="handleEdit(scope.row,scope.index)"></el-button>
-          <el-button type="danger" v-if="permissions.sys_route_del" icon="el-icon-delete" size="mini" @click="rowDel(scope.row,scope.index)"></el-button>
+          <el-button type="primary" icon="el-icon-edit" size="mini" @click="handleEdit(scope.row,scope.index)"></el-button>
+          <el-button type="danger" icon="el-icon-delete" size="mini" @click="rowDel(scope.row,scope.index)"></el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -95,7 +92,6 @@
 
 <script>
 import { fetchList, addObj, putObj, delObj } from '@/api/client'
-import { mapGetters } from 'vuex'
 import { validatenull } from '@/libs/validate'
 export default {
   name: 'client',
@@ -149,10 +145,6 @@ export default {
   created () {
     this.getList()
   },
-  mounted: function () {},
-  computed: {
-    ...mapGetters(['permissions'])
-  },
   methods: {
     getList () {
       this.tableLoading = true
@@ -174,6 +166,13 @@ export default {
       this.getList()
     },
     handleAdd: function () {
+      if (this.$refs.form) {
+        this.$refs.form.resetFields()
+        this.form = {
+          scope: [],
+          authorizedGrantTypes: []
+        }
+      }
       this.dialogFormVisible = true
       this.dialogStatus = 'create'
     },
@@ -261,21 +260,29 @@ export default {
           this.form.authorizedGrantTypes = this.authorizedGrantTypes.join(',')
           this.form.scope = this.scope.join(',')
           addObj(this.form).then(data => {
+            this.$refs.form.resetFields()
+            this.getList()
+            this.dialogFormVisible = false
             this.$message({
               showClose: true,
               message: '添加成功',
               type: 'success'
             })
-            this.$refs.form.resetFields()
-            this.getList()
           })
         }
       })
     },
     dialogClose (done) {
-      this.$refs.form.resetFields()
+      if (this.$refs.form) {
+        this.$refs.form.resetFields()
+        this.form = {
+          scope: [],
+          authorizedGrantTypes: []
+        }
+      }
       this.scope = []
       this.authorizedGrantTypes = []
+      this.getList()
       done()
     }
   }

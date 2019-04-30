@@ -38,18 +38,121 @@ const frameIn = [
     ]
   },
   {
-    path: '/service',
-    redirect: '/service/info',
+    path: '/admin',
     component: layoutHeaderAside,
+    meta: {
+      requiresAuth: true,
+      title: '系统管理'
+    },
     children: [
       {
-        path: 'info',
-        name: 'serviceInfo',
+        path: 'user',
+        name: 'user',
         meta: {
           requiresAuth: true,
-          title: '服务详情'
+          title: '用户管理'
         },
-        component: () => import('@/views/service/ServiceDetail')
+        component: () => import('@/views/admin/user')
+      },
+      {
+        path: 'menu',
+        name: 'menu',
+        meta: {
+          requiresAuth: true,
+          title: '菜单管理'
+        },
+        component: () => import('@/views/admin/menu')
+      },
+      {
+        path: 'role',
+        name: 'role',
+        meta: {
+          requiresAuth: true,
+          title: '角色管理'
+        },
+        component: () => import('@/views/admin/role')
+      },
+      {
+        path: 'auth',
+        name: 'auth',
+        meta: {
+          requiresAuth: true,
+          title: '权限管理'
+        },
+        component: () => import('@/views/admin/auth')
+      },
+      {
+        path: 'log',
+        name: 'log',
+        meta: {
+          requiresAuth: true,
+          title: '日志管理'
+        },
+        component: () => import('@/views/admin/log')
+      },
+      {
+        path: 'dict',
+        name: 'dict',
+        meta: {
+          requiresAuth: true,
+          title: '字典管理'
+        },
+        component: () => import('@/views/admin/dict')
+      },
+      {
+        path: 'dept',
+        name: 'dept',
+        meta: {
+          requiresAuth: true,
+          title: '部门管理'
+        },
+        component: () => import('@/views/admin/dept')
+      },
+      {
+        path: 'route',
+        name: 'route',
+        meta: {
+          requiresAuth: true,
+          title: '路由管理'
+        },
+        component: () => import('@/views/admin/route')
+      },
+      {
+        path: 'client',
+        name: 'client',
+        meta: {
+          requiresAuth: true,
+          title: '客户端管理'
+        },
+        component: () => import('@/views/admin/client')
+      }
+    ]
+  },
+  {
+    path: '/taroco-admin',
+    component: layoutHeaderAside,
+    meta: {
+      requiresAuth: true,
+      title: '服务管理'
+    },
+    children: [
+      {
+        path: 'taroco-api',
+        name: 'taroco-api',
+        meta: {
+          requiresAuth: true,
+          title: '接口文档'
+        },
+        component: () => import('@/views/service/swagger')
+      },
+      {
+        path: 'taroco-governance',
+        name: 'taroco-governance',
+        meta: {
+          requiresAuth: true,
+          title: '服务治理'
+        },
+        component: () => import('@/views/service/governance')
       }
     ]
   }

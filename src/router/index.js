@@ -27,14 +27,10 @@ router.beforeEach((to, from, next) => {
     GetMenu().then(res => {
       // 设置用户菜单
       store.commit('d2admin/user/SET_MENU', res.data)
-      let oRoutes = util.formatRoutes(res.data)
       // 多页面控制: 处理路由 得到每一级的路由设置
-      store.commit('d2admin/page/init', [].concat(frameInRoutes, oRoutes))
-      // 设置侧边栏菜单
-      store.commit('d2admin/menu/asideSet', res.data)
+      store.commit('d2admin/page/init', frameInRoutes)
       // 设置顶栏菜单
       store.commit('d2admin/menu/headerSet', res.data)
-      router.addRoutes(oRoutes)
       next({name: 'index'})
     }).catch(() => {
       // 查询菜单失败 跳转到登陆界面

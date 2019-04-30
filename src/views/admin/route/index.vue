@@ -4,8 +4,8 @@
     <template slot="header">
       <el-button size="mini" type="default" @click="getList" icon="el-icon-refresh">刷新</el-button>
       <div style="float: right">
-        <el-button size="mini" type="success" @click="handleApply" v-if="permissions.sys_route_add" icon="el-icon-upload">同 步</el-button>
-        <el-button size="mini" type="primary" @click="handleAdd" v-if="permissions.sys_route_add" icon="el-icon-plus">新 增</el-button>
+        <el-button size="mini" type="success" @click="handleApply" icon="el-icon-upload">同 步</el-button>
+        <el-button size="mini" type="primary" @click="handleAdd" icon="el-icon-plus">新 增</el-button>
       </div>
     </template>
     <!-- table表格 -->
@@ -16,13 +16,8 @@
               highlight-current-row
               stripe
               style="width: 100%">
-      <el-table-column align="center" label="编号" width="60">
-        <template slot-scope="scope">
-          <span>{{scope.row.id}}</span>
-        </template>
-      </el-table-column>
-      <el-table-column align="center" prop="serviceId" label="服务名称" />
-      <el-table-column align="center" prop="path" label="匹配路劲" />
+      <el-table-column align="left" prop="serviceId" label="服务名称" />
+      <el-table-column align="left" prop="path" label="匹配路劲" />
       <el-table-column align="center" label="去掉前缀" width="80">
         <template slot-scope="scope">
           <el-tag>{{scope.row.stripPrefix | enableFilter}}</el-tag>
@@ -47,8 +42,8 @@
       <el-table-column align="center" prop="sensitiveheadersList" label="敏感头" />
       <el-table-column align="center" label="操作" width="200">
         <template slot-scope="scope">
-          <el-button type="primary" v-if="permissions.sys_route_upd" icon="el-icon-edit" size="mini" @click="handleEdit(scope.row,scope.index)"></el-button>
-          <el-button type="danger" v-if="permissions.sys_route_del" icon="el-icon-delete" size="mini" @click="rowDel(scope.row,scope.index)"></el-button>
+          <el-button type="primary" icon="el-icon-edit" size="mini" @click="handleEdit(scope.row,scope.index)"></el-button>
+          <el-button type="danger" icon="el-icon-delete" size="mini" @click="rowDel(scope.row,scope.index)"></el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -118,7 +113,6 @@ import {
   delObj,
   applyObj
 } from '@/api/route'
-import { mapGetters } from 'vuex'
 export default {
   name: 'route',
   data () {
@@ -173,9 +167,6 @@ export default {
     this.getList()
   },
   mounted: function () {},
-  computed: {
-    ...mapGetters(['permissions'])
-  },
   methods: {
     getList () {
       this.tableLoading = true
@@ -197,8 +188,11 @@ export default {
       this.getList()
     },
     handleAdd: function () {
-      this.dialogFormVisible = true
+      if (this.$refs.form) {
+        this.$refs.form.resetFields()
+      }
       this.dialogStatus = 'create'
+      this.dialogFormVisible = true
     },
     handleApply: function () {
       var _this = this
@@ -284,6 +278,7 @@ export default {
               message: '添加成功',
               type: 'success'
             })
+            this.dialogFormVisible = false
             this.$refs.form.resetFields()
             this.getList()
           })

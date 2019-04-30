@@ -133,6 +133,9 @@ export default {
      * 设置数据权限
      */
     SET_PERMISSIONS (state, permissions) {
+      if (!permissions) {
+        return
+      }
       const list = {}
       for (let i = 0; i < permissions.length; i++) {
         list[permissions[i]] = true

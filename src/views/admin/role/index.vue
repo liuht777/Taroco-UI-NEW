@@ -7,7 +7,7 @@
       :model="listQuery"
       size="mini"
       style="margin-bottom: -18px;">
-        <el-form-item label="用户名" prop="username">
+        <el-form-item label="角色名" prop="roleName">
           <el-input @keyup.enter.native="handleFilter" style="width: 200px;" placeholder="角色名" v-model="listQuery.roleName" clearable>
           </el-input>
         </el-form-item>
@@ -15,7 +15,7 @@
           <el-button type="default" @click="handleFilter" icon="el-icon-search">搜 索</el-button>
         </el-form-item>
         <el-form-item style="float: right">
-          <el-button style="float: right" @click="handleCreate" type="primary" icon="el-icon-plus" v-if="roleManager_btn_add">新 增</el-button>
+          <el-button style="float: right" @click="handleCreate" type="primary" icon="el-icon-plus">新 增</el-button>
         </el-form-item>
     </el-form>
   </template>
@@ -54,7 +54,7 @@
 
     <el-table-column align="center" label="所属部门">
       <template slot-scope="scope">
-        <span>{{scope.row.deptName }}</span>
+        <span>{{scope.row.roleDeptName }}</span>
       </template>
     </el-table-column>
 
@@ -64,11 +64,13 @@
       </template>
     </el-table-column>
 
-    <el-table-column label="操作" width="220">
+    <el-table-column label="操作" width="320" fixed="right">
       <template slot-scope="scope">
-        <el-button size="mini" type="primary" v-if="roleManager_btn_edit" @click="handleUpdate(scope.row)" icon="el-icon-edit"></el-button>
-        <el-button size="mini" type="danger" v-if="roleManager_btn_del" @click="handleDelete(scope.row)" icon="el-icon-delete"></el-button>
-        <el-button size="mini" type="success" plain @click="handlePermission(scope.row)" v-if="roleManager_btn_perm" icon="el-icon-rank"></el-button>
+        <el-button size="mini" type="primary" @click="handleUpdate(scope.row)" icon="el-icon-edit"></el-button>
+        <el-button size="mini" type="danger" @click="handleDelete(scope.row)" icon="el-icon-delete"></el-button>
+        <el-button size="mini" type="success" @click="handleMenu(scope.row)">菜单</el-button>
+        <el-button size="mini" type="default" @click="handleUserSet(scope.row)">成员</el-button>
+        <el-button size="mini" type="warning" @click="handlePermissionSet(scope.row)">权限</el-button>
       </template>
     </el-table-column>
   </el-table>
@@ -98,7 +100,7 @@
         <el-input v-model="form.roleDesc" placeholder="描述"></el-input>
       </el-form-item>
       <el-form-item label="所属部门" prop="roleDept">
-        <el-input v-model="form.deptName" placeholder="选择部门" @focus="handleDept()" readonly></el-input>
+        <el-input v-model="form.roleDeptName" placeholder="选择部门" @focus="handleDept()" readonly></el-input>
         <el-input type="hidden" v-model="form.roleDeptId"></el-input>
       </el-form-item>
     </el-form>
@@ -109,6 +111,9 @@
     </div>
   </el-dialog>
 
+  <ta-role-member-set ref="roleMemberSet"/>
+  <ta-role-permission-set ref="rolePermissionSet"/>
+
   <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogDeptVisible" width="600px">
     <el-tree class="filter-tree" :data="treeDeptData" :default-checked-keys="checkedKeys" check-strictly node-key="id" highlight-current ref="deptTree" @node-click="getNodeData" :props="defaultProps" :filter-node-method="filterNode" default-expand-all>
     </el-tree>
@@ -118,7 +123,7 @@
     <el-tree class="filter-tree" :data="treeData" :default-checked-keys="checkedKeys" check-strictly node-key="id" highlight-current :props="defaultProps" show-checkbox ref="menuTree" :filter-node-method="filterNode">
     </el-tree>
     <div slot="footer" class="dialog-footer">
-      <el-button type="primary" @click="updatePermession(roleId, roleCode)" icon="el-icon-check">授 权</el-button>
+      <el-button type="primary" @click="updateRoleMenu(roleId, roleCode)" icon="el-icon-check">授 权</el-button>
     </div>
   </el-dialog>
 </d2-container>
@@ -131,12 +136,11 @@ import {
   addObj,
   putObj,
   delObj,
-  permissionUpd,
+  roleMenuUpd,
   fetchRoleTree,
   fetchDeptTree
 } from '@/api/role'
 import { fetchTree } from '@/api/menu'
-import { mapGetters } from 'vuex'
 
 export default {
   name: 'table_role',
@@ -160,7 +164,7 @@ export default {
         roleName: undefined,
         roleCode: undefined,
         roleDesc: undefined,
-        deptName: undefined,
+        roleDeptName: undefined,
         roleDeptId: undefined
       },
       roleId: undefined,
@@ -215,7 +219,7 @@ export default {
       textMap: {
         update: '编辑',
         create: '创建',
-        permission: '分配权限'
+        roleMenu: '菜单授权'
       },
       tableKey: 0,
       roleManager_btn_add: false,
@@ -226,13 +230,6 @@ export default {
   },
   created () {
     this.getList()
-    this.roleManager_btn_add = this.permissions['sys_role_add']
-    this.roleManager_btn_edit = this.permissions['sys_role_edit']
-    this.roleManager_btn_del = this.permissions['sys_role_del']
-    this.roleManager_btn_perm = this.permissions['sys_role_perm']
-  },
-  computed: {
-    ...mapGetters(['elements', 'permissions'])
   },
   methods: {
     handleFilter () {
@@ -263,13 +260,13 @@ export default {
     handleUpdate (row) {
       getObj(row.roleId).then(response => {
         this.form = response.data
-        this.form.deptName = row.deptName
+        this.form.roleDeptName = row.roleDeptName
         this.form.roleDeptId = row.roleDeptId
         this.dialogFormVisible = true
         this.dialogStatus = 'update'
       })
     },
-    handlePermission (row) {
+    handleMenu (row) {
       fetchRoleTree(row.roleCode)
         .then(response => {
           this.checkedKeys = response.data
@@ -277,7 +274,7 @@ export default {
         })
         .then(response => {
           this.treeData = response.data
-          this.dialogStatus = 'permission'
+          this.dialogStatus = 'roleMenu'
           this.dialogPermissionVisible = true
           this.roleId = row.roleId
           this.roleCode = row.roleCode
@@ -296,18 +293,27 @@ export default {
     getNodeData (data) {
       this.dialogDeptVisible = false
       this.form.roleDeptId = data.id
-      this.form.deptName = data.name
-      console.log(data)
+      this.form.roleDeptName = data.name
     },
     handleDelete (row) {
-      delObj(row.roleId).then(response => {
-        this.dialogFormVisible = false
-        this.getList()
-        this.$notify({
-          title: '成功',
-          message: '删除成功',
-          type: 'success',
-          duration: 2000
+      this.$confirm(
+        '此操作将永久删除该角色(角色名:' + row.roleName + '), 是否继续?',
+        '提示',
+        {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }
+      ).then(() => {
+        delObj(row.roleId).then(response => {
+          this.dialogFormVisible = false
+          this.getList()
+          this.$notify({
+            title: '成功',
+            message: '删除成功',
+            type: 'success',
+            duration: 2000
+          })
         })
       })
     },
@@ -354,8 +360,8 @@ export default {
         }
       })
     },
-    updatePermession (roleId, roleCode) {
-      permissionUpd(roleId, this.$refs.menuTree.getCheckedKeys()).then(() => {
+    updateRoleMenu (roleId, roleCode) {
+      roleMenuUpd(roleId, this.$refs.menuTree.getCheckedKeys()).then(() => {
         this.dialogPermissionVisible = false
         fetchTree()
           .then(response => {
@@ -380,6 +386,12 @@ export default {
         roleCode: undefined,
         roleDesc: undefined
       }
+    },
+    handleUserSet (row) {
+      this.$refs.roleMemberSet.init(row.roleId)
+    },
+    handlePermissionSet (row) {
+      this.$refs.rolePermissionSet.init(row.roleId)
     }
   }
 }

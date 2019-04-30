@@ -76,52 +76,6 @@ function getMenu (menu, path) {
 }
 
 /**
- * 通过用户菜单生成路由信息
- *
- * @param {用户菜单} aMenu
- */
-util.formatRoutes = function (aMenu, parentPath) {
-  if (validatenull(aMenu)) {
-    return []
-  }
-  const aRouter = []
-  aMenu.forEach(oMenu => {
-    const {
-      path,
-      component,
-      name,
-      icon,
-      children
-    } = oMenu
-
-    if (!validatenull(component)) {
-      const oRouter = {
-        path: parentPath ? parentPath + '/' + path : path,
-        component (resolve) {
-          let componentPath = ''
-          if (component === 'Layout') {
-            require(['@/layout/header-aside'], resolve)
-            return
-          } else {
-            componentPath = component
-          }
-          require([`../${componentPath}.vue`], resolve)
-        },
-        name: name,
-        icon: icon,
-        children: validatenull(children) ? [] : util.formatRoutes(children, path),
-        meta: {
-          requiresAuth: true,
-          title: name
-        }
-      }
-      aRouter.push(oRouter)
-    }
-  })
-  return aRouter
-}
-
-/**
  * @description 更新标题
  * @param {String} title 标题
  */
