@@ -2,6 +2,7 @@ import util from '@/libs/util.js'
 import { loginByUsername, logout } from '@/api/login'
 import { GetMenu } from '@/api/menu'
 import { frameInRoutes } from '@/router/routes'
+import { Loading } from 'element-ui'
 
 export default {
   namespaced: true,
@@ -14,6 +15,7 @@ export default {
      */
     login ({ commit, dispatch }, { vm, username, password, code, randomStr }) {
       // 开始请求登录接口
+      const loading = Loading.service()
       loginByUsername(username, password, code, randomStr)
         .then(res => {
           // 设置 cookie 一定要存 uuid 和 token 两个 cookie
@@ -44,6 +46,9 @@ export default {
               name: 'index'
             })
           })
+        })
+        .finally(() => {
+          loading.close()
         })
         .catch(err => {
           console.group('登陆出错')
