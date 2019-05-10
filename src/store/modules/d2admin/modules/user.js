@@ -1,16 +1,62 @@
-// 设置文件
-import setting from '@/setting.js'
-
 export default {
   namespaced: true,
   state: {
     // 用户信息
-    info: setting.user.info,
+    info: {},
     accessToken: '',
     refreshToken: '',
-    roles: null,
-    menu: null,
-    permissions: null
+    roles: [],
+    menu: [],
+    permissions: []
+  },
+  actions: {
+    /**
+     * @description 从数据库取用户数据
+     * @param {Object} state vuex state
+     */
+    load ({ state, dispatch }) {
+      return new Promise(async resolve => {
+        // 从持久化加载用户一系列数据
+        state.info = await this.dispatch('d2admin/db/get', {
+          dbName: 'sys',
+          path: 'user.info',
+          defaultValue: {},
+          user: true
+        })
+        state.accessToken = await this.dispatch('d2admin/db/get', {
+          dbName: 'sys',
+          path: 'user.accessToken',
+          defaultValue: '',
+          user: true
+        })
+        state.refreshToken = await this.dispatch('d2admin/db/get', {
+          dbName: 'sys',
+          path: 'user.refreshToken',
+          defaultValue: '',
+          user: true
+        })
+        state.roles = await this.dispatch('d2admin/db/get', {
+          dbName: 'sys',
+          path: 'user.roles',
+          defaultValue: [],
+          user: true
+        })
+        state.menu = await this.dispatch('d2admin/db/get', {
+          dbName: 'sys',
+          path: 'user.menu',
+          defaultValue: [],
+          user: true
+        })
+        state.permissions = await this.dispatch('d2admin/db/get', {
+          dbName: 'sys',
+          path: 'user.permissions',
+          defaultValue: [],
+          user: true
+        })
+        // end
+        resolve()
+      })
+    }
   },
   mutations: {
     /**
@@ -28,54 +74,6 @@ export default {
         value: info,
         user: true
       })
-    },
-    /**
-     * @description 从数据库取用户数据
-     * @param {Object} state vuex state
-     */
-    async load (state) {
-      // 从持久化加载用户一系列数据
-      state.info = await this.dispatch('d2admin/db/get', {
-        dbName: 'sys',
-        path: 'user.info',
-        defaultValue: setting.user.info,
-        user: true
-      })
-      state.accessToken = await this.dispatch('d2admin/db/get', {
-        dbName: 'sys',
-        path: 'user.accessToken',
-        defaultValue: '',
-        user: true
-      })
-      state.refreshToken = await this.dispatch('d2admin/db/get', {
-        dbName: 'sys',
-        path: 'user.refreshToken',
-        defaultValue: '',
-        user: true
-      })
-      state.roles = await this.dispatch('d2admin/db/get', {
-        dbName: 'sys',
-        path: 'user.roles',
-        defaultValue: [],
-        user: true
-      })
-      state.menu = await this.dispatch('d2admin/db/get', {
-        dbName: 'sys',
-        path: 'user.menu',
-        defaultValue: [],
-        user: true
-      })
-      let permissions = await this.dispatch('d2admin/db/get', {
-        dbName: 'sys',
-        path: 'user.permissions',
-        defaultValue: [],
-        user: true
-      })
-      const list = {}
-      for (let i = 0; i < permissions.length; i++) {
-        list[permissions[i]] = true
-      }
-      state.permissions = list
     },
     /**
      * 设置access_token

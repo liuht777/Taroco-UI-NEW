@@ -1,42 +1,12 @@
-import log from './util.log.js'
-import cookies from './util.cookies.js'
+import cookies from './util.cookies'
+import db from './util.db'
+import log from './util.log'
 import { validatenull } from './validate'
 
-const TokenKey = 'x-access-token'
-let util = {
+const util = {
   cookies,
+  db,
   log
-}
-
-/**
- * 获取access_token
- */
-util.getToken = function () {
-  return util.cookies.get(TokenKey)
-}
-
-/**
- * 设置access_token
- */
-util.setToken = function (token) {
-  util.cookies.set(TokenKey, token)
-}
-
-/**
- * 删除access_token
- */
-util.removeToken = function () {
-  util.cookies.remove(TokenKey)
-}
-
-/**
- * 生成随机len位数字
- */
-util.randomLenNum = function (len, date) {
-  let random = ''
-  random = Math.ceil(Math.random() * 100000000000000).toString().substr(0, typeof len === 'number' ? len : 4)
-  if (date) random = random + Date.now()
-  return random
 }
 
 /**
@@ -76,6 +46,16 @@ function getMenu (menu, path) {
 }
 
 /**
+ * 生成随机len位数字
+ */
+util.randomLenNum = function (len, date) {
+  let random = ''
+  random = Math.ceil(Math.random() * 100000000000000).toString().substr(0, typeof len === 'number' ? len : 4)
+  if (date) random = random + Date.now()
+  return random
+}
+
+/**
  * @description 更新标题
  * @param {String} title 标题
  */
@@ -92,10 +72,10 @@ util.open = function (url) {
   var a = document.createElement('a')
   a.setAttribute('href', url)
   a.setAttribute('target', '_blank')
-  a.setAttribute('id', 'd2admin-menu-link')
+  a.setAttribute('id', 'd2admin-link-temp')
   document.body.appendChild(a)
   a.click()
-  document.body.removeChild(document.getElementById('d2admin-menu-link'))
+  document.body.removeChild(document.getElementById('d2admin-link-temp'))
 }
 
 export default util

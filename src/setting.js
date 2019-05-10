@@ -1,6 +1,12 @@
-import { version } from '../package'
-
-const setting = {
+export default {
+  // 快捷键
+  // 支持快捷键 例如 ctrl+shift+s
+  hotkey: {
+    search: {
+      open: 's',
+      close: 'esc'
+    }
+  },
   // 侧边栏默认折叠状态
   menu: {
     asideCollapse: false
@@ -10,17 +16,17 @@ const setting = {
     opened: [
       {
         name: 'index',
+        fullPath: '/index',
         meta: {
           title: '首页',
-          requiresAuth: false
+          auth: false
         }
       }
     ]
   },
-  // 版本
-  releases: {
-    version: version,
-    api: 'https://api.github.com/repos/FairyEver/d2-admin/releases/latest'
+  // 菜单搜索
+  search: {
+    enable: true
   },
   // 注册的主题
   theme: {
@@ -57,13 +63,5 @@ const setting = {
   // 是否默认开启页面切换动画
   transition: {
     active: true
-  },
-  // 在读取持久化数据失败时默认用户信息
-  user: {
-    info: {
-      username: 'Ghost'
-    }
   }
 }
-
-export default setting

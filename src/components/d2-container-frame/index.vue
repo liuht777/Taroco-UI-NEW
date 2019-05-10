@@ -1,5 +1,5 @@
 <template>
-  <d2-container>
+  <d2-container v-bind="$attrs">
     <iframe
       class="d2-container-frame"
       :src="src"
@@ -14,7 +14,7 @@ export default {
     src: {
       type: String,
       required: false,
-      default: 'https://d2-projects.github.io/d2-admin-doc/zh/'
+      default: 'https://doc.d2admin.fairyever.com/zh/'
     }
   }
 }
