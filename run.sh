@@ -1,6 +1,6 @@
 #!/bin/sh
 echo 'build static resources'
-npm run build
+npm run show-build
 # kill old container
 if docker ps | grep -i taroco-ui
     then

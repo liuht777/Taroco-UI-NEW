@@ -1,34 +1,41 @@
 <template>
-  <div>
+  <span>
     <el-popover
       ref="pop"
       v-model="pop"
       :placement="placement"
       width="300"
       trigger="click">
-      <div class="header d2-clearfix d2-mb-10" v-if="clearable">
-        <el-button type="danger" icon="el-icon-delete" size="mini" class="d2-fr" @click="selectIcon()">清空</el-button>
-      </div>
+      <el-row type="flex" justify="end" class="d2-mb-10" v-if="clearable">
+        <el-button
+          type="danger"
+          icon="el-icon-delete"
+          size="mini"
+          class="d2-fr"
+          @click="selectIcon()">
+          清空
+        </el-button>
+      </el-row>
       <el-input
         v-model="searchText"
         :clearable="true"
         placeholder="搜索 比如 'plus'"
         prefix-icon="el-icon-search">
       </el-input>
-      <el-collapse v-if="!searchMode" class="group" v-model="collapseActive">
-        <el-collapse-item v-for="(item, index) in icon" :key="index" :title="item.title" :name="index" class="class">
-          <el-row class="class-row">
-            <el-col class="class-col" v-for="(iconName, iconIndex) in item.icon" :key="iconIndex" :span="4" @click.native="selectIcon(iconName)">
+      <el-collapse v-if="!searchMode" class="d2-icon-select--group" v-model="collapseActive">
+        <el-collapse-item v-for="(item, index) in icon" :key="index" :title="item.title" :name="index" class="d2-icon-select--class">
+          <el-row class="d2-icon-select--class-row">
+            <el-col class="d2-icon-select--class-col" v-for="(iconName, iconIndex) in item.icon" :key="iconIndex" :span="4" @click.native="selectIcon(iconName)">
               <i :class="'fa fa-' + iconName"></i>
             </el-col>
           </el-row>
         </el-collapse-item>
       </el-collapse>
-      <div v-if="searchMode" class="group">
-        <div class="class" v-for="(item, index) in iconFilted" :key="index">
-          <div class="class-title">{{item.title}}</div>
-          <el-row class="class-row">
-            <el-col class="class-col" v-for="(iconName, iconIndex) in item.icon" :key="iconIndex" :span="4" @click.native="selectIcon(iconName)">
+      <div v-if="searchMode" class="d2-icon-select--group">
+        <div class="d2-icon-select--class" v-for="(item, index) in iconFilted" :key="index">
+          <div class="d2-icon-select--class-title">{{item.title}}</div>
+          <el-row class="d2-icon-select--class-row">
+            <el-col class="d2-icon-select--class-col" v-for="(iconName, iconIndex) in item.icon" :key="iconIndex" :span="4" @click.native="selectIcon(iconName)">
               <i :class="'fa fa-' + iconName"></i>
             </el-col>
           </el-row>
@@ -55,7 +62,7 @@
       </template>
       {{value ? value : placeholder}}
     </el-button>
-  </div>
+  </span>
 </template>
 
 <script>
@@ -139,9 +146,6 @@ export default {
   watch: {
     value (value) {
       this.currentValue = value
-    },
-    currentValue (value) {
-      this.selectIcon(value)
     }
   },
   created () {
@@ -159,23 +163,22 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '~@/assets/style/public.scss';
-.group {
+.d2-icon-select--group {
   max-height: 400px;
   overflow-x: hidden;
   overflow-y: scroll;
   border-top: none;
   border-bottom: none;
-  .class {
-    .class-title {
+  .d2-icon-select--class {
+    .d2-icon-select--class-title {
       line-height: 30px;
       text-align: center;
       background-color: $color-bg;
       border-radius: 4px;
       margin: 10px 0px;
     }
-    .class-row {
-      .class-col {
+    .d2-icon-select--class-row {
+      .d2-icon-select--class-col {
         line-height: 40px;
         text-align: center;
         color: $color-text-sub;

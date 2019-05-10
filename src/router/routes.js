@@ -1,5 +1,7 @@
-// layout
 import layoutHeaderAside from '@/layout/header-aside'
+
+// 由于懒加载页面太多的话会造成webpack热更新太慢，所以开发环境不使用懒加载，只有生产环境使用懒加载
+const _import = require('@/libs/util.import.' + process.env.NODE_ENV)
 
 /**
  * 在主框架内显示
@@ -10,17 +12,42 @@ const frameIn = [
     redirect: { name: 'index' },
     component: layoutHeaderAside,
     children: [
+      // 首页
       {
         path: 'index',
         name: 'index',
         meta: {
-          requiresAuth: true,
-          title: '首页'
+          auth: true
         },
-        component: () => import('@/pages/index')
+        component: _import('system/index')
+      },
+      // 系统 前端日志
+      {
+        path: 'log',
+        name: 'log',
+        meta: {
+          title: '前端日志',
+          auth: true
+        },
+        component: _import('system/log')
+      },
+      // 刷新页面 必须保留
+      {
+        path: 'refresh',
+        name: 'refresh',
+        hidden: true,
+        component: _import('system/function/refresh')
+      },
+      // 页面重定向 必须保留
+      {
+        path: 'redirect/:route*',
+        name: 'redirect',
+        hidden: true,
+        component: _import('system/function/redirect')
       }
     ]
   },
+  // iframe
   {
     path: '/myiframe',
     redirect: '/myiframe',
@@ -33,7 +60,7 @@ const frameIn = [
           requiresAuth: true,
           title: 'iframe'
         },
-        component: () => import('@/pages/iframe')
+        component: () => import('@/views/system/iframe')
       }
     ]
   },
@@ -52,7 +79,7 @@ const frameIn = [
           requiresAuth: true,
           title: '用户管理'
         },
-        component: () => import('@/views/admin/user')
+        component: () => import('@/views/taroco/admin/user')
       },
       {
         path: 'menu',
@@ -61,7 +88,7 @@ const frameIn = [
           requiresAuth: true,
           title: '菜单管理'
         },
-        component: () => import('@/views/admin/menu')
+        component: () => import('@/views/taroco/admin/menu')
       },
       {
         path: 'role',
@@ -70,7 +97,7 @@ const frameIn = [
           requiresAuth: true,
           title: '角色管理'
         },
-        component: () => import('@/views/admin/role')
+        component: () => import('@/views/taroco/admin/role')
       },
       {
         path: 'auth',
@@ -79,7 +106,7 @@ const frameIn = [
           requiresAuth: true,
           title: '权限管理'
         },
-        component: () => import('@/views/admin/auth')
+        component: () => import('@/views/taroco/admin/auth')
       },
       {
         path: 'log',
@@ -88,7 +115,7 @@ const frameIn = [
           requiresAuth: true,
           title: '日志管理'
         },
-        component: () => import('@/views/admin/log')
+        component: () => import('@/views/taroco/admin/log')
       },
       {
         path: 'dict',
@@ -97,7 +124,7 @@ const frameIn = [
           requiresAuth: true,
           title: '字典管理'
         },
-        component: () => import('@/views/admin/dict')
+        component: () => import('@/views/taroco/admin/dict')
       },
       {
         path: 'dept',
@@ -106,7 +133,7 @@ const frameIn = [
           requiresAuth: true,
           title: '部门管理'
         },
-        component: () => import('@/views/admin/dept')
+        component: () => import('@/views/taroco/admin/dept')
       },
       {
         path: 'route',
@@ -115,7 +142,7 @@ const frameIn = [
           requiresAuth: true,
           title: '路由管理'
         },
-        component: () => import('@/views/admin/route')
+        component: () => import('@/views/taroco/admin/route')
       },
       {
         path: 'client',
@@ -124,7 +151,7 @@ const frameIn = [
           requiresAuth: true,
           title: '客户端管理'
         },
-        component: () => import('@/views/admin/client')
+        component: () => import('@/views/taroco/admin/client')
       }
     ]
   },
@@ -143,7 +170,7 @@ const frameIn = [
           requiresAuth: true,
           title: '接口文档'
         },
-        component: () => import('@/views/service/swagger')
+        component: () => import('@/views/taroco/service/swagger')
       },
       {
         path: 'taroco-governance',
@@ -152,7 +179,7 @@ const frameIn = [
           requiresAuth: true,
           title: '服务治理'
         },
-        component: () => import('@/views/service/governance')
+        component: () => import('@/views/taroco/service/governance')
       }
     ]
   }
@@ -162,11 +189,11 @@ const frameIn = [
  * 在主框架之外显示
  */
 const frameOut = [
-  // 登陆
+  // 登录
   {
     path: '/login',
     name: 'login',
-    component: () => import('@/pages/login')
+    component: _import('system/login')
   }
 ]
 
@@ -174,11 +201,10 @@ const frameOut = [
  * 错误页面
  */
 const errorPage = [
-  // 404
   {
     path: '*',
     name: '404',
-    component: () => import('@/pages/error-page-404')
+    component: _import('system/error/404')
   }
 ]
 

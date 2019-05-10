@@ -89,8 +89,8 @@ export default {
       this.visible = true
     },
     queryAdded () {
-      rolePermissionsAdded(this.roleId, Object.assign(this.pageAdded, {perName: this.deleteUsername}))
-        .then(({data}) => {
+      rolePermissionsAdded(this.roleId, Object.assign(this.pageAdded, { perName: this.deleteUsername }))
+        .then(({ data }) => {
           if (data.status === 'SUCCEED') {
             this.added = data.result.records
             this.addedTotal = data.result.total
@@ -98,8 +98,8 @@ export default {
         })
     },
     queryNotin () {
-      rolePermissionsNotin(this.roleId, Object.assign(this.pageNotin, {perName: this.addUsername}))
-        .then(({data}) => {
+      rolePermissionsNotin(this.roleId, Object.assign(this.pageNotin, { perName: this.addUsername }))
+        .then(({ data }) => {
           if (data.status === 'SUCCEED') {
             this.notin = data.result.records
             this.notinTotal = data.result.total
@@ -116,7 +116,7 @@ export default {
     },
     addOne (row) {
       rolePermissionsUpd(this.roleId, [row.id], 'add')
-        .then(({data}) => {
+        .then(({ data }) => {
           if (data.status === 'SUCCEED') {
             this.queryAdded()
             this.queryNotin()
@@ -131,7 +131,7 @@ export default {
     },
     deleteOne (row) {
       rolePermissionsUpd(this.roleId, [row.id], 'delete')
-        .then(({data}) => {
+        .then(({ data }) => {
           if (data.status === 'SUCCEED') {
             this.queryAdded()
             this.queryNotin()
