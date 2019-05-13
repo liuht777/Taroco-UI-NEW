@@ -40,10 +40,8 @@ export default {
             commit('d2admin/menu/headerSet', res.data, { root: true })
             // 初始化菜单搜索功能
             commit('d2admin/search/init', util.initHeaderMenu(res.data), { root: true })
-            // 跳转路由
-            vm.$router.push({
-              name: 'index'
-            })
+            // 重定向对象不存在则返回顶层路径
+            vm.$router.replace(vm.$route.query.redirect || '/')
           })
         })
         .finally(() => {
