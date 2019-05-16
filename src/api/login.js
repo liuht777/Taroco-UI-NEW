@@ -21,6 +21,23 @@ export const loginByUsername = (username, password, code, randomStr) => {
 }
 
 /**
+ * 手机号登录
+ *
+ * @param {手机号} mobile
+ * @param {验证码} code
+ */
+export const loginByMobile = (mobile, code) => {
+  return request({
+    url: '/auth/oauth/mobile',
+    headers: {
+      'Authorization': 'Basic dGFyb2NvOnRhcm9jbw=='
+    },
+    method: 'post',
+    params: { mobile, code }
+  })
+}
+
+/**
  * 退出登录
  * @param {请求token} accesstoken
  */

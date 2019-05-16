@@ -1,11 +1,54 @@
 import { Message, MessageBox, Loading } from 'element-ui'
 import util from '@/libs/util.js'
-import { loginByUsername, logout } from '@/api/login'
+import { loginByUsername, loginByMobile, logout } from '@/api/login'
 import { GetMenu } from '@/api/menu'
 
 export default {
   namespaced: true,
   actions: {
+    /**
+     * 手机号登录
+     */
+    loginByPhone ({ commit, dispatch }, { vm, mobile, code }) {
+      // 开始请求登录接口
+      const loading = Loading.service()
+      loginByMobile(mobile, code)
+        .then(res => {
+          // 设置 cookie 一定要存 uuid 和 token 两个 cookie
+          // 整个系统依赖这两个数据进行校验和存储
+          // uuid 是用户身份唯一标识 用户注册的时候确定 并且不可改变 不可重复
+          // token 代表用户当前登录状态 建议在网络请求中携带 token
+          // 如有必要 token 需要定时更新，默认保存一天
+          util.cookies.set('uuid', res.data['x-user-name'])
+          util.cookies.set('token', res.data.access_token)
+          // 设置 vuex token信息
+          commit('d2admin/user/SET_ACCESS_TOKEN', res.data.access_token, { root: true })
+          commit('d2admin/user/SET_REFRESH_TOKEN', res.data.refresh_token, { root: true })
+          commit('d2admin/user/SET_USER_INFO', { name: res.data['x-user-name'] }, { root: true })
+          commit('d2admin/user/SET_ROLES', res.data['x-user-role'], { root: true })
+          commit('d2admin/user/SET_PERMISSIONS', res.data['x-user-permission'], { root: true })
+          // 用户登陆后从持久化数据加载一系列的设置
+          dispatch('load')
+          GetMenu().then(res => {
+            // 设置用户菜单
+            commit('d2admin/user/SET_MENU', res.data, { root: true })
+            // 设置顶栏菜单
+            commit('d2admin/menu/headerSet', res.data, { root: true })
+            // 初始化菜单搜索功能
+            commit('d2admin/search/init', util.initHeaderMenu(res.data), { root: true })
+            // 重定向对象不存在则返回顶层路径
+            vm.$router.replace(vm.$route.query.redirect || '/')
+          })
+        })
+        .finally(() => {
+          loading.close()
+        })
+        .catch(err => {
+          console.group('登陆出错')
+          console.log('err: ', err)
+          console.groupEnd()
+        })
+    },
     /**
      * @description 登录
      * @param {Object} param context
