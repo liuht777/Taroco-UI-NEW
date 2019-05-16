@@ -37,3 +37,10 @@ export function putObj (obj) {
     data: obj
   })
 }
+
+export function sendSmsCode (mobile) {
+  return request({
+    url: `/admin/user/smsCode/${mobile}`,
+    method: 'get'
+  })
+}

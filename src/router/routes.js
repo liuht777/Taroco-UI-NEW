@@ -57,7 +57,7 @@ const frameIn = [
         path: ':routerPath',
         name: 'iframe',
         meta: {
-          requiresAuth: true,
+          auth: true,
           title: 'iframe'
         },
         component: () => import('@/views/system/iframe')
@@ -68,7 +68,7 @@ const frameIn = [
     path: '/admin',
     component: layoutHeaderAside,
     meta: {
-      requiresAuth: true,
+      auth: true,
       title: '系统管理'
     },
     children: [
@@ -76,7 +76,7 @@ const frameIn = [
         path: 'user',
         name: 'user',
         meta: {
-          requiresAuth: true,
+          auth: true,
           title: '用户管理'
         },
         component: () => import('@/views/taroco/admin/user')
@@ -85,7 +85,7 @@ const frameIn = [
         path: 'menu',
         name: 'menu',
         meta: {
-          requiresAuth: true,
+          auth: true,
           title: '菜单管理'
         },
         component: () => import('@/views/taroco/admin/menu')
@@ -94,7 +94,7 @@ const frameIn = [
         path: 'role',
         name: 'role',
         meta: {
-          requiresAuth: true,
+          auth: true,
           title: '角色管理'
         },
         component: () => import('@/views/taroco/admin/role')
@@ -103,7 +103,7 @@ const frameIn = [
         path: 'auth',
         name: 'auth',
         meta: {
-          requiresAuth: true,
+          auth: true,
           title: '权限管理'
         },
         component: () => import('@/views/taroco/admin/auth')
@@ -112,7 +112,7 @@ const frameIn = [
         path: 'log',
         name: 'log',
         meta: {
-          requiresAuth: true,
+          auth: true,
           title: '日志管理'
         },
         component: () => import('@/views/taroco/admin/log')
@@ -121,7 +121,7 @@ const frameIn = [
         path: 'dict',
         name: 'dict',
         meta: {
-          requiresAuth: true,
+          auth: true,
           title: '字典管理'
         },
         component: () => import('@/views/taroco/admin/dict')
@@ -130,7 +130,7 @@ const frameIn = [
         path: 'dept',
         name: 'dept',
         meta: {
-          requiresAuth: true,
+          auth: true,
           title: '部门管理'
         },
         component: () => import('@/views/taroco/admin/dept')
@@ -139,7 +139,7 @@ const frameIn = [
         path: 'route',
         name: 'route',
         meta: {
-          requiresAuth: true,
+          auth: true,
           title: '路由管理'
         },
         component: () => import('@/views/taroco/admin/route')
@@ -148,7 +148,7 @@ const frameIn = [
         path: 'client',
         name: 'client',
         meta: {
-          requiresAuth: true,
+          auth: true,
           title: '客户端管理'
         },
         component: () => import('@/views/taroco/admin/client')
@@ -159,7 +159,7 @@ const frameIn = [
     path: '/taroco-admin',
     component: layoutHeaderAside,
     meta: {
-      requiresAuth: true,
+      auth: true,
       title: '服务管理'
     },
     children: [
@@ -167,7 +167,7 @@ const frameIn = [
         path: 'taroco-api',
         name: 'taroco-api',
         meta: {
-          requiresAuth: true,
+          auth: true,
           title: '接口文档'
         },
         component: () => import('@/views/taroco/service/swagger')
@@ -176,7 +176,7 @@ const frameIn = [
         path: 'taroco-governance',
         name: 'taroco-governance',
         meta: {
-          requiresAuth: true,
+          auth: true,
           title: '服务治理'
         },
         component: () => import('@/views/taroco/service/governance')

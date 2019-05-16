@@ -4,6 +4,8 @@ const VueFilenameInjector = require('./tools/vue-filename-injector')
 // 拼接路径
 const resolve = dir => require('path').join(__dirname, dir)
 
+const Timestamp = new Date().getTime()
+
 // 增加环境变量
 process.env.VUE_APP_VERSION = require('./package.json').version
 process.env.VUE_APP_BUILD_TIME = require('dayjs')().format('YYYY-M-D HH:mm:ss')
@@ -98,5 +100,11 @@ module.exports = {
     // 重新设置 alias
     config.resolve.alias
       .set('@api', resolve('src/api'))
+  },
+  configureWebpack: { // webpack 配置
+    output: { // 输出重构  打包编译后的 文件名称  【模块名称.版本号.时间戳】
+      filename: `[name].${process.env.VUE_APP_VERSION}.${Timestamp}.js`,
+      chunkFilename: `[name].${process.env.VUE_APP_VERSION}.${Timestamp}.js`
+    }
   }
 }
