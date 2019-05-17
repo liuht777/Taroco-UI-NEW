@@ -180,6 +180,15 @@ const frameIn = [
           title: '服务治理'
         },
         component: () => import('@/views/taroco/service/governance')
+      },
+      {
+        path: 'taroco-sentinel',
+        name: 'taroco-sentinel',
+        meta: {
+          auth: true,
+          title: 'Sentinel 控制台'
+        },
+        component: () => import('@/views/taroco/service/sentinel')
       }
     ]
   }
