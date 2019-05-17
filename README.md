@@ -11,7 +11,11 @@
 
 ## 前言
 
-'Taroco' 是一整套的微服务企业级解决方案。是微服务敏捷开发的代表。
+'Taroco' 力争做到简洁、上手快、代码质量高，并且不做过多的融合操作。比如分布式事务、消息总线等与业务紧密结合的东西，一切脱离业务的设计都是耍流氓。
+
+'Taroco' 拥抱 Spring Cloud Alibaba，为全线微服务保驾护航。
+
+'Taroco' 是微服务敏捷开发的代表，加速中小型项目开发周期。PS：远离996，远离ICU。
 
 ## 项目介绍
 
@@ -21,19 +25,18 @@ Cloud 为微服务架构开发涉及的统一认证，配置管理，服务治�
 
 Spring Cloud 本身已经封装得足够简单，也够丰富。也许正是因为这种简单而丰富，使得想要使用它的团队望而却步。学习成本太高，历史包袱太重，维护成本太高等等一系列原因。
 
-*Taroco* 就是为了解决这一问题而诞生的。 *Taroco* 整合了 Spring Cloud 的**配置中心**、**注册中心**、**服务网关**，提供了一系列starter组件，
-同时提供**服务治理**、**服务监控**、**OAuth2 权限认证**，支持**服务降级/熔断**、**基于标签(x-label)
-的路由**、**服务权重**，前端采用**vue+elementUI**，可以很好的解决技术转向 Spring Cloud 的一系列问题，努力打造全方位的微服务敏捷开发解决方案。
+*Taroco* 就是为了解决这一问题而诞生的。 *Taroco* 拥抱 **Spring Cloud Alibaba**，整合**Nacos**、**Sentinel**，提供了一系列starter组件，
+同时提供**服务治理**、**服务监控**、**OAuth2 权限认证**，支持**服务降级/熔断**、前端采用**Vue**，可以很好的解决技术转向 Spring Cloud 的一系列问题，努力打造全方位的微服务敏捷开发解决方案。
 
 *Taroco* 提供了基于 Docker Compose 的部署方式。配置文件统一放置在docs目录中，运行脚本案例在根目录中查找。
 
 ### 主要实现功能
 
-* 基于Nacos的服务注册中心以及配置中心
-* Spring Cloud Zuul 统一微服务网关配置，支持动态路由配置
+* 基于Nacos的服务注册中心以及配置中心。
+* Spring Cloud Zuul 统一微服务网关配置，支持动态路由配置。
 * 基于 Spring-Boot-Admin 的自实现的服务治理。包括日志、变量、映射等情况。
-* 基于 Spring Security OAuth2 的权限认证系统。采用JWT RSA非对称加密的形式进行 token 加密解密。
-* 支持基于权重以及基于标签的服务路由，支持动态配置服务权重及标签信息。通过控制用户标签以及动态路由的配置，满足各种各样请求策略。
+* 基于 Spring Security OAuth2 的权限认证系统（支持手机号登录）。采用JWT RSA非对称加密的形式进行 token 加密解密。
+* 整合 Sentinel，对服务及API进行流量控制、熔断降级、系统负载等功能保护，为微服务保驾护航。
 * 完善的RBAC权限控制，用户信息通过网关解析到请求头，随后通过自定义注解 `@RequireRole` `@RequirePermission`，可以灵活有效的进行 API 级别的权限控制。
 
 ### 分支版本
@@ -58,7 +61,8 @@ Spring Cloud 本身已经封装得足够简单，也够丰富。也许正是因�
 │   ├── taroco-ribbon-spring-boot-starter --基于ribbon的服务治理扩展
 │   ├── taroco-swagger2-spring-boot-starter --自定义封装swagger2配置
 ├── taroco-docs --文档、截图、docker文件、初始化脚本
-├── taroco-gateway --微服务网关
+├── taroco-gateway-zuul --微服务网关
+├── taroco-oauth2-demo --oauth2 demo项目(客户端、资源服务器、SSO)
 ├── taroco-rbac --基于角色的权限控制服务
 ├── taroco-service-governance --服务治理（Spring Boot Admin）
 
@@ -69,10 +73,9 @@ Spring Cloud 本身已经封装得足够简单，也够丰富。也许正是因�
 ![login](https://github.com/liuht777/Taroco/blob/master/taroco-docs/files/login.png)
 ![menu](https://github.com/liuht777/Taroco/blob/master/taroco-docs/files/menu.png)
 ![route](https://github.com/liuht777/Taroco/blob/master/taroco-docs/files/route.png)
-![monitor](https://github.com/liuht777/Taroco/blob/master/taroco-docs/files/monitor.png)
+![sentinel](https://github.com/liuht777/Taroco/blob/master/taroco-docs/files/sentinel.png)
 ![servers](https://github.com/liuht777/Taroco/blob/master/taroco-docs/files/servers.png)
 ![api](https://github.com/liuht777/Taroco/blob/master/taroco-docs/files/api.png)
-![zipkin](https://github.com/liuht777/Taroco/blob/master/taroco-docs/files/zipkin.png)
 
 ### 后端环境
 
