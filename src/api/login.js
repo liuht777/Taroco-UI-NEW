@@ -9,11 +9,11 @@ import request from '@/plugin/axios'
  */
 export const loginByUsername = (username, password, code, randomStr) => {
   var grantType = 'password'
-  var scope = 'server'
+  var scope = 'All'
   return request({
     url: '/auth/oauth/token',
     headers: {
-      'Authorization': 'Basic dGFyb2NvOnRhcm9jbw=='
+      'Authorization': 'Basic NWQyMmViNmU4YjBjN2JhMDY2MDE0Mzk4OjEyMzQ1Ng=='
     },
     method: 'post',
     params: { username, password, randomStr, code, 'grant_type': grantType, scope }
@@ -30,21 +30,9 @@ export const loginByMobile = (mobile, code) => {
   return request({
     url: '/auth/oauth/mobile',
     headers: {
-      'Authorization': 'Basic dGFyb2NvOnRhcm9jbw=='
+      'Authorization': 'Basic NWQyMmViNmU4YjBjN2JhMDY2MDE0Mzk4OjEyMzQ1Ng=='
     },
     method: 'post',
     params: { mobile, code }
-  })
-}
-
-/**
- * 退出登录
- * @param {请求token} accesstoken
- */
-export const logout = (accesstoken) => {
-  return request({
-    url: '/auth/authentication/removeToken',
-    method: 'post',
-    params: { accesstoken }
   })
 }
