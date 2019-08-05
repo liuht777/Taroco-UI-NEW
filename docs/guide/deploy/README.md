@@ -10,9 +10,9 @@ Taroco 使用 Docker compose 部署, Docker compose 文件已经内置到项目�
 
 如需安装 Docker企业版 以及关于Docker的更多描述, 请阅读 Docker [官方文档](https://docs.docker-cn.com/)
 
-* centos版本必须要高于3.10 
+> centos 内核版本必须要高于3.10 
 
-查看centos版 本
+查看 centos 内核版本
 
 ```
 uname -r 
@@ -82,30 +82,12 @@ Taroco 依赖 mysql 以及 redis 服务，这两个服务需要优先启动。
 sh taroco-run-base.sh
 ```
 
-### 启动注册中心以及配置中心
-
-所有服务都依赖注册中心以及配置中心，所以这两个服务也是优先启动。
-
-```
-sh taroco-run-eureka.sh
-```
-
 ### 启动其他服务
 
-接下来就是启动一些具体的业务（应用）了，taroco-run.sh 脚本中包括了权限服务、认证服务、监控服务、服务管理、服务网关。
+接下来就是启动一些具体的业务（应用）了，taroco-run.sh 脚本中包括了权限服务、认证服务、服务治理、服务网关。
 
 ```
 sh taroco-run.sh
-```
-
-### 启动zipkin（可选）
-
-zipkin 服务对内存有一定要求，如果内存不足，可能启动不起来。同时 zipkin 服务依赖mysql，启动之前需要将 taroco-docs/zipkin.sql 导入到 taroco-oauth2 库当中。
-
-你也可以修改为单独的库启动，只需修改 docker-compose-zipkin.yml 当中的库名即可。
-
-```
-sh taroco-run-zipkin.sh
 ```
 
 ## 部署前端

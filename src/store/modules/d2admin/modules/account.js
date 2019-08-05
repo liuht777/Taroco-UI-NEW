@@ -1,6 +1,6 @@
 import { Message, MessageBox, Loading } from 'element-ui'
 import util from '@/libs/util.js'
-import { loginByUsername, loginByMobile, logout } from '@/api/login'
+import { loginByUsername, loginByMobile } from '@/api/login'
 import { GetMenu } from '@/api/menu'
 
 export default {
@@ -106,18 +106,12 @@ export default {
        * @description 注销
        */
       function doLogout () {
-        logout(util.cookies.get('token')).then(() => {
-          // 删除cookie
-          util.cookies.remove('token')
-          util.cookies.remove('uuid')
-          // 跳转路由
-          vm.$router.push({
-            name: 'login'
-          })
-        }).catch(error => {
-          console.group('退出登录出错')
-          console.log('err: ', error)
-          console.groupEnd()
+        // 删除cookie
+        util.cookies.remove('token')
+        util.cookies.remove('uuid')
+        // 跳转路由
+        vm.$router.push({
+          name: 'login'
         })
       }
       // 判断是否需要确认

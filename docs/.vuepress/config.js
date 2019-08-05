@@ -29,11 +29,13 @@ module.exports = {
           { text: '首页', link: '/' },
           { text: '指南', link: '/guide/'},
           { text: '学习', link: '/learn/eureka/'},
+          { text: '统一认证', link: '/authentication/'},
           { text: '开发手册', link: '/developer/'},
           { text: 'Github', 
             items: [
-              { text: '后端', link: 'https://github.com/liuht777/Taroco' },
-              { text: '前端', link: 'https://github.com/liuht777/Taroco-Ui-Vue' },
+              { text: 'Taroco后端', link: 'https://github.com/liuht777/Taroco' },
+              { text: 'Taroco前端', link: 'https://github.com/liuht777/Taroco-Ui-Vue' },
+              { text: 'Taroco-Authentication', link: 'https://github.com/liuht777/Taroco-Authentication' }
             ],
           }
         ],
@@ -58,12 +60,20 @@ module.exports = {
               ]
             }
           ],
-          '/developer/': [
+          '/authentication/': [
             {
               collapsable: false,
               children: [
-                'service/'
+                '',
+                'SpringSecurity',
+                'SpringSecurityOAuth2',
+                'AccessToken'
               ]
+            }
+          ],
+          '/developer/': [
+            {
+              collapsable: false
             }
           ],
         }
