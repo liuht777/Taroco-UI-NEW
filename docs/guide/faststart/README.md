@@ -26,7 +26,7 @@ D2Admin 中文文档：[D2Admin Document](https://doc.d2admin.fairyever.com/zh/)
 
 在此版本中，使用了 Nacos 作为配置中心和注册中心，所以我们首先要保证 Nacos 服务可用。
 
-* 下载 1.0 编译版本 [Nacos Release](https://github.com/alibaba/nacos/releases)
+* 下载 1.1.0 编译版本 [Nacos Release](https://github.com/alibaba/nacos/releases)
 
 * 修改 Nacos 配置 application.properties，通过 Mysql 存储配置
 
@@ -53,13 +53,15 @@ nohup sh startup.sh -m standalone &
 
 Sentinel 是阿里巴巴开源的分布式系统的流量防卫组件，Sentinel 把流量作为切入点，从流量控制，熔断降级，系统负载保护等多个维度保护服务的稳定性。
 
-* 下载 Sentinel Release 版本 1.5.1 [Sentinel Release](https://github.com/alibaba/Sentinel/releases)
+* 下载 Sentinel Release 版本 1.6.3 [Sentinel Release](https://github.com/alibaba/Sentinel/releases)
 
 * 启动 Sentinel 控制台
 
 ```
-java -Dserver.port=9006 -jar sentinel-dashboard-1.5.1.jar >>/dev/null &
+java -Dserver.port=9006 -jar sentinel-dashboard-1.6.3.jar >>/dev/null &
 ```
+
+> 1.6.3启用了用户权限，默认用户密码是sentinel/sentinel
 
 > 更多 Sentinel 和 Spring Cloud Alibaba 的使用示例请参考：[Sentinel Example](https://github.com/alibaba/spring-cloud-alibaba/blob/master/spring-cloud-alibaba-examples/sentinel-example/sentinel-core-example/readme-zh.md)
 
