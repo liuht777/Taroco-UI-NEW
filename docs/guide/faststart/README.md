@@ -8,8 +8,8 @@
 
 * JDK1.8+
 * Spring Boot 2.0.5
-* Spring Cloud Finchley.SR1
-* Spring Cloud Alibaba 0.2.2.RELEASE
+* Spring Cloud Finchley.SR4
+* Spring Cloud Alibaba 2.0.0.RELEASE
 * Maven 3.0+
 * Redis 3.0+
 * MySQL 5.7
